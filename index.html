@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="bn">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>আল্ট্রা লাইট গ্যালারি</title>
+
+    <style>
+
+       
+
+        /* গ্যালারি গ্রিড - আরও ছোট থাম্বনেইল */
+
+        .ultra-light-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+
+            gap: 4px;
+
+            max-width: 100%;
+
+            margin: 0 auto;
+
+        }
+
+        /* কার্ড স্টাইল */
+
+        .thumb-item {
+
+            background: #e0e0e0;
+
+            aspect-ratio: 1/1;
+
+            border-radius: 6px;
+
+            overflow: hidden;
+
+            cursor: pointer;
+
+            border: 1px solid #ddd;
+
+        }
+
+        .thumb-item img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            opacity: 0.8; /* প্রিভিউতে ছবি হালকা দেখাবে */
+
+            transition: opacity 0.3s;
+
+            /* ব্রাউজারের ওপর চাপ কমাতে গুরুত্বপূর্ণ */
+
+            image-rendering: auto; 
+
+            content-visibility: auto;
+
+        }
+
+        .thumb-item:hover img { opacity: 1; }
+
+        /* পপআপ মডাল */
+
+        .lightbox {
+
+            position: fixed;
+
+            top: 0; left: 0; width: 100%; height: 100%;
+
+            background: rgba(0,0,0,0.95);
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 10000;
+
+            padding: 5px;
+
+        }
+
+        .lightbox img {
+
+            max-width: 100%;
+
+            max-height: 98vh;
+
+            border: 2px solid white;
+
+            border-radius: 4px;
+
+            display: none; /* লোড না হওয়া পর্যন্ত লুকানো */
+
+        }
+
+        /* ক্লোজ বাটন */
+
+        .close {
+
+            position: absolute;
+
+            top: 10px; right: 15px;
+
+            color: #fff; font-size: 40px; cursor: pointer;
+
+            line-height: 1;
+
+        }
+
+        /* স্পিনার */
+
+        .spinner {
+
+            border: 4px solid rgba(255,255,255,0.3);
+
+            border-top: 4px solid #fff;
+
+            border-radius: 50%;
+
+            width: 35px; height: 35px;
+
+            animation: spin 1s linear infinite;
+
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="ultra-light-grid" id="gallery"></div>
+
+<div class="lightbox" id="lb" onclick="closeLB()">
+
+    <span class="close">&times;</span>
+
+    <div id="loader" class="spinner"></div>
+
+    <img id="fullPhoto" src="" alt="Full Resolution Image">
+
+</div>
+
+<script>
+
+    // আপনার গিটহাব লিঙ্ক
+
+    const baseUrl = "https://github.com/MSHS24K/Free-Fire/releases/download/FreeFire/FF.";
+
+    const count = 521;
+
+    const gallery = document.getElementById('gallery');
+
+    const lb = document.getElementById('lb');
+
+    const fullPhoto = document.getElementById('fullPhoto');
+
+    const loader = document.getElementById('loader');
+
+    // ১. গ্যালারি রেন্ডার (সবচেয়ে লাইট পদ্ধতি)
+
+    for (let i = 1; i <= count; i++) {
+
+        const url = `${baseUrl}${i}.png`;
+
+        
+
+        const div = document.createElement('div');
+
+        div.className = 'thumb-item';
+
+        
+
+        // প্রিভিউ ছবিতে decoding="async" দেওয়া হয়েছে যাতে ব্রাউজার মেইন থ্রেড ব্লক না করে
+
+        div.innerHTML = `<img src="${url}" loading="lazy" decoding="async" alt="P">`;
+
+        
+
+        div.onclick = (e) => {
+
+            e.stopPropagation();
+
+            openLB(url);
+
+        };
+
+        
+
+        gallery.appendChild(div);
+
+    }
+
+    // ২. অরিজিনাল ছবি পপআপে লোড করা
+
+    function openLB(url) {
+
+        lb.style.display = 'flex';
+
+        fullPhoto.style.display = 'none';
+
+        loader.style.display = 'block';
+
+        fullPhoto.src = url;
+
+        fullPhoto.onload = () => {
+
+            loader.style.display = 'none';
+
+            fullPhoto.style.display = 'block';
+
+        };
+
+    }
+
+    function closeLB() {
+
+        lb.style.display = 'none';
+
+        fullPhoto.src = ''; // মেমোরি খালি রাখা
+
+    }
+
+</script>
+
+</body>
+
+</html>
